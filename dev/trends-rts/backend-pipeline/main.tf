@@ -19,7 +19,32 @@ data "terraform_remote_state" "vpc" {
 locals {
   cluster_name = "TrendsNonprodCodePipelineCdkStackv2TRENDSdevtaskdefE2393CD0"
   env          = "dev"
+  vpc_id       = data.terraform_remote_state.vpc.outputs.vpc_id
+  subnet_ids   = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
 }
+
+
+
+resource "aws_security_group" "pipeline" {
+  name        = "${local.env}-ServiceCodePipeline-securitygroup"
+  vpc_id      = local.vpc_id
+
+  ingress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
 
 module "backend_pipeline" {
   source                        = "../../../modules/pipeline"
@@ -61,9 +86,9 @@ module "backend_pipeline" {
   }
 
   codebuild_vpc_config          = {
-    id = data.terraform_remote_state.vpc.outputs.vpc_id,
-    subnets = [],
-    security_groups = []
+    id = local.vpc_id,
+    subnets = local.subnet_ids,
+    security_groups = aws_security_group.pipeline.id
   }
 
   cloudwatch_event_rule_name    = "${local.env}-ServiceCodePipelineRule"
