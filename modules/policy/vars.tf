@@ -1,0 +1,10 @@
+variable "resource_prefix" {}
+variable "aws_region" {}
+variable "account_id" {}
+variable "repository_name" {}
+variable "pipeline_name" {}
+variable "cloud_watch_event_role_name" {}
+variable "codepipeline_role_name" {}
+variable "kms_key_arn" {}
+variable "artifacts_bucket_name" {}
+variable "common_tags" {}
