@@ -85,11 +85,14 @@ module "backend_pipeline" {
     VERACODE_APP_ID_UI = "4304"
   }
 
-  codebuild_vpc_config          = {
-    id = local.vpc_id,
-    subnets = local.subnet_ids,
-    security_groups = aws_security_group.pipeline.id
-  }
+  # codebuild_vpc_config          = {
+  #   id = local.vpc_id,
+  #   subnets = local.subnet_ids,
+  #   security_groups = [aws_security_group.pipeline.id]
+  # }
+  vpc_id                        = local.vpc_id
+  subnet_ids                    = local.subnet_ids
+  security_groups               = [aws_security_group.pipeline.id]
 
   cloudwatch_event_rule_name    = "${local.env}-ServiceCodePipelineRule"
 }

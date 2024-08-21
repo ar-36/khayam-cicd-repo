@@ -52,10 +52,22 @@ variable "codebuild_env_vars" {
   default     = {}
 }
 
-variable "codebuild_vpc_config" {
-  description = "VPC configuration for codebuild"
-  type        = map(any)
-  default     = {}
+variable "vpc_id" {
+  description = "The ID of the VPC"
+  type        = string
+  default     = ""
+}
+
+variable "subnet_ids" {
+  description = "The IDs of the subnets"
+  type        = list(string)
+  default     = []
+}
+
+variable "security_groups" {
+  description = "The IDs of the security groups"
+  type        = list(string)
+  default     = []
 }
 
 variable "cloudwatch_event_rule_name" {

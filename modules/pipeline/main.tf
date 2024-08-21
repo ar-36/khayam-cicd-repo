@@ -1,4 +1,14 @@
 
+locals {
+  codebuild_vpc_config = (
+    var.vpc_id != "" && length(var.subnet_ids) > 0 && length(var.security_groups) > 0
+  ) ? {
+    id              = var.vpc_id
+    subnets         = var.subnet_ids
+    security_groups = var.security_groups
+  } : null
+}
+
 module "role" {
   source = "./modules/role"
   resource_prefix = var.environment
@@ -51,7 +61,7 @@ module "serviceCodeBuild" {
   repo = var.source_repo
   env_vars = var.codebuild_env_vars
 
-  vpc_config = var.codebuild_vpc_config
+  vpc_config = local.codebuild_vpc_config
   kms_key_arn = module.codepipeline_kms.arn
   common_tags = var.tags
 
